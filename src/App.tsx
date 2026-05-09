@@ -1,6 +1,22 @@
+import { useState, useEffect } from 'react'
 import './App.css'
 
 function App() {
+  const [gitStats, setGitStats] = useState({ repos: 0, followers: 0, following: 0 })
+
+  useEffect(() => {
+    fetch('https://api.github.com/users/selormwalker')
+      .then(res => res.json())
+      .then(data => {
+        setGitStats({
+          repos: data.public_repos || 0,
+          followers: data.followers || 0,
+          following: data.following || 0
+        })
+      })
+      .catch(err => console.error("Error fetching GitHub data:", err))
+  }, [])
+
   const projects = [
     {
       title: "Jarvis AI CLI",
@@ -45,6 +61,19 @@ function App() {
         <div className="hero-content">
           <h1>Building the <span className="gradient-text">Future</span> of Code</h1>
           <p>AI Architect | Full Stack Developer | Innovation Enthusiast</p>
+          <div className="hero-stats">
+            <div className="stat-pill">
+              <span className="stat-value">{gitStats.repos}</span>
+              <span className="stat-label">Repositories</span>
+            </div>
+            <div className="stat-pill">
+              <span className="stat-value">{gitStats.followers}</span>
+              <span className="stat-label">Followers</span>
+            </div>
+            <div className="stat-pill pulse">
+              <span className="stat-label">System Active</span>
+            </div>
+          </div>
           <a href="#projects" className="primary-btn">Explore My Work</a>
         </div>
       </main>
