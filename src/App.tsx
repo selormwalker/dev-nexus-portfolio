@@ -22,12 +22,20 @@ function App() {
     }
   ]
 
+  const skills = [
+    { name: "AI Architecture", level: "Advanced" },
+    { name: "Full Stack Development", level: "Expert" },
+    { name: "Cloud Infrastructure", level: "Intermediate" },
+    { name: "Data Engineering", level: "Advanced" }
+  ]
+
   return (
     <div className="portfolio-container">
       <nav className="glass-nav">
         <div className="logo">SELORM WALKER</div>
         <div className="nav-links">
           <a href="#projects">PROJECTS</a>
+          <a href="#skills">SKILLS</a>
           <a href="#about">ABOUT</a>
           <a href="#contact">CONTACT</a>
         </div>
@@ -53,6 +61,23 @@ function App() {
                   {project.tech.map((t, i) => <span key={i}>{t}</span>)}
                 </div>
                 <a href={project.link} target="_blank" rel="noopener noreferrer" className="card-link">View Repository →</a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section id="skills" className="skills-section">
+        <h2 className="section-title">Technical <span className="gradient-text">Expertise</span></h2>
+        <div className="skills-grid">
+          {skills.map((skill, index) => (
+            <div key={index} className="skill-item">
+              <div className="skill-info">
+                <span className="skill-name">{skill.name}</span>
+                <span className="skill-level">{skill.level}</span>
+              </div>
+              <div className="skill-bar">
+                <div className="skill-progress" style={{ width: skill.level === "Expert" ? "95%" : skill.level === "Advanced" ? "85%" : "70%" }}></div>
               </div>
             </div>
           ))}
