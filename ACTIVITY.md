@@ -480,3 +480,6 @@ ACTIVITY: Implemented granular telemetry logging for deep system observability.
 TIMESTAMP: Fri May 22 21:36:57 UTC 2026
 ACTIVITY: Enhanced the visual polish of the CLI output for a better developer experience.
 ---
+TIMESTAMP: Fri May 22 22:37:55 UTC 2026
+ACTIVITY: Updated the technical architecture docs to reflect recent infrastructure changes.
+---
