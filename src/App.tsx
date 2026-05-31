@@ -1,10 +1,31 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Github, Twitter, Linkedin, Mail, ExternalLink, Cpu, Globe, Layers, Zap, Sun, Moon, Monitor } from 'lucide-react'
 import './App.css'
+
+interface Repo {
+  id: number
+  name: string
+  description: string
+  html_url: string
+  stargazers_count: number
+  language: string
+}
 
 function App() {
   const [gitStats, setGitStats] = useState({ repos: 0, followers: 0, following: 0 })
+  const [repos, setRepos] = useState<Repo[]>([])
+  const [theme, setTheme] = useState<'cyber' | 'neon' | 'minimal'>('cyber')
+  const [isDarkMode, setIsDarkMode] = useState(true)
 
   useEffect(() => {
+    // Set theme on body
+    document.body.setAttribute('data-theme', theme)
+    document.body.className = isDarkMode ? 'dark' : 'light'
+  }, [theme, isDarkMode])
+
+  useEffect(() => {
+    // Fetch User Stats
     fetch('https://api.github.com/users/selormwalker')
       .then(res => res.json())
       .then(data => {
@@ -14,107 +35,166 @@ function App() {
           following: data.following || 0
         })
       })
-      .catch(err => console.error("Error fetching GitHub data:", err))
+      .catch(err => console.error("Error fetching GitHub stats:", err))
+
+    // Fetch Top Repositories
+    fetch('https://api.github.com/users/selormwalker/repos?sort=updated&per_page=10')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          const filtered = data
+            .filter(r => !r.fork)
+            .sort((a, b) => b.stargazers_count - a.stargazers_count)
+            .slice(0, 6)
+          setRepos(filtered)
+        }
+      })
+      .catch(err => console.error("Error fetching repos:", err))
   }, [])
 
-  const projects = [
-    {
-      title: "Jarvis AI CLI",
-      description: "Autonomous task manager with natural language parsing and subtask generation.",
-      tech: ["Python", "Gemini AI", "SQLite"],
-      link: "https://github.com/selormwalker/jarvis-cli"
-    },
-    {
-      title: "AI Code Guardian",
-      description: "Automated code reviewer that provides intelligent feedback using LLMs.",
-      tech: ["Python", "Gemini AI", "Typer"],
-      link: "https://github.com/selormwalker/ai-code-guardian"
-    },
-    {
-      title: "Data Pulse Scraper",
-      description: "Real-time web scraper and market trend visualizer.",
-      tech: ["Python", "BS4", "Matplotlib"],
-      link: "https://github.com/selormwalker/data-pulse-scraper"
-    }
+  const skills = [
+    { name: "AI Architecture", level: 95, icon: <Cpu size={18} /> },
+    { name: "Full Stack Dev", level: 98, icon: <Globe size={18} /> },
+    { name: "Low-Latency C++", level: 85, icon: <Zap size={18} /> },
+    { name: "Blockchain Core", level: 90, icon: <Layers size={18} /> }
   ]
 
-  const skills = [
-    { name: "AI Architecture", level: "Advanced" },
-    { name: "Full Stack Development", level: "Expert" },
-    { name: "Cloud Infrastructure", level: "Intermediate" },
-    { name: "Data Engineering", level: "Advanced" }
-  ]
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.2 } }
+  }
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { y: 0, opacity: 1 }
+  }
 
   return (
-    <div className="portfolio-container">
-      <nav className="glass-nav">
-        <div className="logo">SELORM WALKER</div>
-        <div className="nav-links">
-          <a href="#projects">PROJECTS</a>
-          <a href="#skills">SKILLS</a>
-          <a href="#about">ABOUT</a>
-          <a href="#contact">CONTACT</a>
+    <div className={`nexus-layout ${theme}-theme`}>
+      {/* Dynamic Background */}
+      <div className="bg-glow"></div>
+      <div className="mesh-bg"></div>
+
+      <nav className="navbar">
+        <motion.div initial={{ x: -50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="nav-logo">
+          <span className="logo-icon">✦</span> NEXUS
+        </motion.div>
+        
+        <div className="nav-controls">
+           <div className="theme-switcher">
+              <button onClick={() => setTheme('cyber')} className={theme === 'cyber' ? 'active' : ''}>Cyber</button>
+              <button onClick={() => setTheme('neon')} className={theme === 'neon' ? 'active' : ''}>Neon</button>
+              <button onClick={() => setTheme('minimal')} className={theme === 'minimal' ? 'active' : ''}>Zen</button>
+           </div>
+           <button onClick={() => setIsDarkMode(!isDarkMode)} className="mode-toggle">
+              {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+           </button>
         </div>
       </nav>
-      
-      <main className="hero-section">
-        <div className="hero-content">
-          <h1>Building the <span className="gradient-text">Future</span> of Code</h1>
-          <p>AI Architect | Full Stack Developer | Innovation Enthusiast</p>
-          <div className="hero-stats">
-            <div className="stat-pill">
-              <span className="stat-value">{gitStats.repos}</span>
-              <span className="stat-label">Repositories</span>
-            </div>
-            <div className="stat-pill">
-              <span className="stat-value">{gitStats.followers}</span>
-              <span className="stat-label">Followers</span>
-            </div>
-            <div className="stat-pill pulse">
-              <span className="stat-label">System Active</span>
+
+      <section className="hero">
+        <motion.div 
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="hero-inner"
+        >
+          <div className="badge">VERSION 2.0 ACTIVE</div>
+          <h1 className="hero-title">
+            Architecting <span className="text-glow">Autonomous</span> Systems
+          </h1>
+          <p className="hero-subtitle">
+            Senior Software Engineer & AI Researcher building the next generation of decentralized infrastructure.
+          </p>
+          
+          <div className="hero-actions">
+            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="btn-primary">
+              View Ecosystem
+            </motion.button>
+            <div className="social-links">
+               <a href="https://github.com/selormwalker"><Github size={20} /></a>
+               <a href="#"><Linkedin size={20} /></a>
+               <a href="#"><Twitter size={20} /></a>
+               <a href="#"><Mail size={20} /></a>
             </div>
           </div>
-          <a href="#projects" className="primary-btn">Explore My Work</a>
-        </div>
-      </main>
 
-      <section id="projects" className="projects-section">
-        <h2 className="section-title">Featured <span className="gradient-text">Projects</span></h2>
-        <div className="projects-grid">
-          {projects.map((project, index) => (
-            <div key={index} className="project-card">
-              <div className="card-glass">
-                <h3>{project.title}</h3>
-                <p>{project.description}</p>
-                <div className="tech-stack">
-                  {project.tech.map((t, i) => <span key={i}>{t}</span>)}
-                </div>
-                <a href={project.link} target="_blank" rel="noopener noreferrer" className="card-link">View Repository →</a>
+          <div className="hero-stats-grid">
+             <div className="stat-card">
+                <span className="stat-num">{gitStats.repos}</span>
+                <span className="stat-txt">REPOS</span>
+             </div>
+             <div className="stat-card">
+                <span className="stat-num">{gitStats.followers}</span>
+                <span className="stat-txt">FOLLOWERS</span>
+             </div>
+             <div className="stat-card">
+                <span className="stat-num">∞</span>
+                <span className="stat-txt">LATENCY</span>
+             </div>
+          </div>
+        </motion.div>
+      </section>
+
+      <section id="projects" className="section">
+        <h2 className="section-hdr">FEATURED <span className="text-accent">NODES</span></h2>
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="repos-grid"
+        >
+          {repos.map((repo) => (
+            <motion.div key={repo.id} variants={itemVariants} className="repo-card">
+              <div className="repo-header">
+                <span className="repo-lang">{repo.language || 'Code'}</span>
+                <div className="repo-stars"><Zap size={12} fill="currentColor"/> {repo.stargazers_count}</div>
               </div>
-            </div>
+              <h3 className="repo-name">{repo.name}</h3>
+              <p className="repo-desc">{repo.description}</p>
+              <div className="repo-footer">
+                <a href={repo.html_url} target="_blank" rel="noreferrer" className="repo-btn">
+                  Initialize <ExternalLink size={14} />
+                </a>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+      </section>
+
+      <section className="section">
+        <h2 className="section-hdr">NEURAL <span className="text-accent">STACK</span></h2>
+        <div className="skills-nexus">
+          {skills.map((skill, i) => (
+            <motion.div 
+              key={i}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className="skill-nexus-item"
+            >
+               <div className="skill-nexus-hdr">
+                  <span className="skill-icon">{skill.icon}</span>
+                  <span className="skill-label">{skill.name}</span>
+                  <span className="skill-perc">{skill.level}%</span>
+               </div>
+               <div className="skill-nexus-bar">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    whileInView={{ width: `${skill.level}%` }}
+                    transition={{ duration: 1.5, ease: "easeOut" }}
+                    className="skill-nexus-progress"
+                  />
+               </div>
+            </motion.div>
           ))}
         </div>
       </section>
 
-      <section id="skills" className="skills-section">
-        <h2 className="section-title">Technical <span className="gradient-text">Expertise</span></h2>
-        <div className="skills-grid">
-          {skills.map((skill, index) => (
-            <div key={index} className="skill-item">
-              <div className="skill-info">
-                <span className="skill-name">{skill.name}</span>
-                <span className="skill-level">{skill.level}</span>
-              </div>
-              <div className="skill-bar">
-                <div className="skill-progress" style={{ width: skill.level === "Expert" ? "95%" : skill.level === "Advanced" ? "85%" : "70%" }}></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <footer className="glass-footer">
-        <p>© 2026 Selorm Walker. Powered by Autonomous AI.</p>
+      <footer className="footer">
+         <div className="footer-line"></div>
+         <p>© 2026 SELORM WALKER | DEPLOYED VIA NEXUS-CLI</p>
       </footer>
     </div>
   )
