@@ -3436,3 +3436,6 @@ System heartbeat: 2026-07-30 20:45:10 - Verified node integrity and optimized ec
 TIMESTAMP: Thu Jul 30 21:32:51 UTC 2026
 ACTIVITY: Enhanced the visual polish of the CLI output for a better developer experience.
 ---
+TIMESTAMP: Thu Jul 30 22:39:46 UTC 2026
+ACTIVITY: Updated the technical architecture docs to reflect recent infrastructure changes.
+---
